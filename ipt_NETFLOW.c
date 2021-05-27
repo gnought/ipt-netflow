@@ -3658,12 +3658,12 @@ static inline void add_tpl_field(__u8 *ptr, const int type, const struct ipt_net
 	case icmpTypeCodeIPv6:	put_unaligned(nf->tuple.d_port, (__be16 *)ptr); break;
 	case MUL_IGMP_TYPE:            *ptr = nf->tuple.d_port; break;
 	case flowEndReason: 	       *ptr = nf->flowEndReason; break;
-#ifdef CONFIG_NF_NAT_NEEDED
 #define PUT_UNALIGNED_NAT(pre, post, *p) \
 		if (hookdir(nf->hooknumx - 1) == 0) \
 			put_unaligned(pre, *p); \
 		else \
 			put_unaligned(post, *p);
+#ifdef CONFIG_NF_NAT_NEEDED
 	case postNATSourceIPv4Address:	       PUT_UNALIGNED_NAT(nf->nat->pre.s_addr, nf->nat->post.s_addr, (__be32 *)ptr); break;
 	case postNATDestinationIPv4Address:    PUT_UNALIGNED_NAT(nf->nat->pre.d_addr, nf->nat->post.d_addr, (__be32 *)ptr); break;
 	case postNAPTSourceTransportPort:      PUT_UNALIGNED_NAT(nf->nat->pre.s_port, nf->nat->post.s_port, (__be16 *)ptr); break;
