@@ -3659,10 +3659,15 @@ static inline void add_tpl_field(__u8 *ptr, const int type, const struct ipt_net
 	case MUL_IGMP_TYPE:            *ptr = nf->tuple.d_port; break;
 	case flowEndReason: 	       *ptr = nf->flowEndReason; break;
 #ifdef CONFIG_NF_NAT_NEEDED
-	case postNATSourceIPv4Address:	       put_unaligned(nf->nat->post.s_addr, (__be32 *)ptr); break;
-	case postNATDestinationIPv4Address:    put_unaligned(nf->nat->post.d_addr, (__be32 *)ptr); break;
-	case postNAPTSourceTransportPort:      put_unaligned(nf->nat->post.s_port, (__be16 *)ptr); break;
-	case postNAPTDestinationTransportPort: put_unaligned(nf->nat->post.d_port, (__be16 *)ptr); break;
+#define PUT_UNALIGNED_NAT(pre, post, *p) \
+		if (hookdir(nf->hooknumx - 1) == 0) \
+			put_unaligned(pre, *p); \
+		else \
+			put_unaligned(post, *p);
+	case postNATSourceIPv4Address:	       PUT_UNALIGNED_NAT(nf->nat->pre.s_addr, nf->nat->post.s_addr, (__be32 *)ptr); break;
+	case postNATDestinationIPv4Address:    PUT_UNALIGNED_NAT(nf->nat->pre.d_addr, nf->nat->post.d_addr, (__be32 *)ptr); break;
+	case postNAPTSourceTransportPort:      PUT_UNALIGNED_NAT(nf->nat->pre.s_port, nf->nat->post.s_port, (__be16 *)ptr); break;
+	case postNAPTDestinationTransportPort: PUT_UNALIGNED_NAT(nf->nat->pre.d_port, nf->nat->post.d_port, (__be16 *)ptr); break;
 	case natEvent:		       *ptr = nf->nat->nat_event; break;
 #endif
 	case IPSecSPI:       put_unaligned(EXTRACT_SPI(nf->tuple), (__be32 *)ptr); break;
