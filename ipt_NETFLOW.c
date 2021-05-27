@@ -1135,7 +1135,7 @@ static int flows_dump_seq_show(struct seq_file *seq, void *v)
 	seq_printf(seq, "%d %04x %x",
 	    st->pcache,
 	    hash_netflow(&nf->tuple),
-	    (!!inactive_needs_export(nf, i_timeout, jiffies)) | 
+	    (!!inactive_needs_export(nf, i_timeout, jiffies)) |
 	    (active_needs_export(nf, a_timeout, jiffies) << 1));
 	seq_printf(seq, " %hd,%hd",
 	    nf->tuple.i_ifc,
