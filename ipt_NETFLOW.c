@@ -3659,7 +3659,7 @@ static inline void add_tpl_field(__u8 *ptr, const int type, const struct ipt_net
 	case MUL_IGMP_TYPE:            *ptr = nf->tuple.d_port; break;
 	case flowEndReason: 	       *ptr = nf->flowEndReason; break;
 #define PUT_UNALIGNED_NAT(pre, post, p) \
-		if (hookdir(nf->hooknumx - 1) == 0) \
+		if (hook2dir(nf->hooknumx - 1) == 0) \
 			put_unaligned(nf->nat->pre, p); \
 		else \
 			put_unaligned(nf->nat->post, p);
