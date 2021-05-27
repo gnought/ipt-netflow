@@ -5007,6 +5007,9 @@ static unsigned int netflow_target(
 	struct netflow_aggr_n *aggr_n;
 	struct netflow_aggr_p *aggr_p;
 #endif
+#if defined(ENABLE_PHYSDEV) || defined(ENABLE_PHYSDEV_OVER)
+	struct nf_bridge_info *nf_bridge = nf_bridge_info_get(skb);
+#endif
 	__u8 s_mask, d_mask;
 	unsigned int ptr;
 	int fragment;
@@ -5033,8 +5036,8 @@ static unsigned int netflow_target(
 	memset(&tuple, 0, sizeof(tuple));
 	tuple.l3proto = family;
 #ifdef ENABLE_PHYSDEV_OVER
-	if (nf_bridge_info_get(skb) && nf_bridge_info_get(skb)->physindev)
-		tuple.i_ifc = nf_bridge_info_get(skb)->physindev->ifindex;
+	if (nf_bridge && nf_bridge->physindev)
+		tuple.i_ifc = nf_bridge->physindev->ifindex;
 	else /* FALLTHROUGH */
 #endif
 	tuple.i_ifc	= if_in? if_in->ifindex : -1;
@@ -5298,8 +5301,8 @@ do_protocols:
 		nf->tcp_flags = tcp_flags;
 		nf->o_ifc = if_out? if_out->ifindex : -1;
 #ifdef ENABLE_PHYSDEV_OVER
-		if (nf_bridge_info_get(skb) && nf_bridge_info_get(skb)->physoutdev)
-			nf->o_ifc = nf_bridge_info_get(skb)->physoutdev->ifindex;
+		if (nf_bridge && nf_bridge->physoutdev)
+			nf->o_ifc = nf_bridge->physoutdev->ifindex;
 #endif
 
 #ifdef SNMP_RULES
@@ -5309,8 +5312,8 @@ do_protocols:
 #endif
 /* copy and snmp-resolve device with physdev overriding normal dev */
 #define copy_dev(out, physdev, dev) \
-		if (nf_bridge_info_get(skb) && nf_bridge_info_get(skb)->physdev) \
-			out = resolve_snmp(nf_bridge_info_get(skb)->physdev); \
+		if (nf_bridge && nf_bridge->physdev) \
+			out = resolve_snmp(nf_bridge->physdev); \
 		else \
 			out = resolve_snmp(dev);
 #ifdef ENABLE_PHYSDEV
