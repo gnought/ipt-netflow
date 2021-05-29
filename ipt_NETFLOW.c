@@ -3001,6 +3001,10 @@ static struct base_template template_ipv4 = {
 		IPV4_SRC_ADDR,
 		IPV4_DST_ADDR,
 		IPV4_NEXT_HOP,
+#ifdef CONFIG_NF_NAT_NEEDED
+		postNATSourceIPv4Address,
+		postNATDestinationIPv4Address,
+#endif
 		IP_VERSION,
 		0
 	}
@@ -3037,6 +3041,10 @@ static struct base_template template_ports = {
 	.types = {
 		L4_SRC_PORT,
 		L4_DST_PORT,
+#ifdef CONFIG_NF_NAT_NEEDED
+		postNAPTSourceTransportPort,
+		postNAPTDestinationTransportPort,
+#endif
 		TCP_FLAGS,
 		0
 	}
